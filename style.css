@@ -1,0 +1,31 @@
+* {
+  padding: 0%;
+  margin: 0%;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #eee;
+}
+
+.box {
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.box:hover {
+  transform: scale(1.05, 1.05);
+}
+.active {
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.form-inline {
+  justify-content: space-between;
+}
+
+.form-inline .form-control {
+  width: auto;
+}
+.btn {
+  text-transform: capitalize;
+}

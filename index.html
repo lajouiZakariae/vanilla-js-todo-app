@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <form class="form-inline w-75 mx-auto m-3" id="addProduct">
+        <input
+          type="text"
+          class="form-control"
+          name="title"
+          id="title"
+          aria-describedby="helpId"
+          placeholder="Title of Product"
+        />
+        <button class="btn btn-primary" type="submit">add product</button>
+      </form>
+      <!-- CONTROLS -->
+      <div class="text-right mx-auto w-75" style="background: #eee">
+        <button class="btn btn-danger btn-block mb-4">clear all</button>
+        <input
+          type="text"
+          class="form-control"
+          name="searchInput"
+          id="searchInput"
+          aria-describedby="helpId"
+          placeholder="Search products"
+        />
+      </div>
+      <!-- PORDUCT LIST -->
+      <div class="product-list my-4"></div>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>
