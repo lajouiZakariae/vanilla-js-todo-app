@@ -17,25 +17,25 @@ function _button(btnClass, content = "") {
 }
 
 /* LocalStorage Actions */
-function getLocal(key = "products") {
+function getLocal(key = "todos") {
   return JSON.parse(localStorage.getItem(key));
 }
-function saveLocal(key = "products", data) {
+function saveLocal(key = "todos", data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
-function clearLocal(key = "products") {
+function clearLocal(key = "todos") {
   localStorage.setItem(key, "[]");
 }
 
 /**
- * The @function renderProduct creates a card component (styled by bootstrap)
- * icluding two buttons , attache the events and pass the id product's id (one for editing, one for deleting)
+ * The @function renderTodo creates a card component (styled by bootstrap)
+ * icluding two buttons , attache the events and pass the id todo's id (one for editing, one for deleting)
  *
  * @param {HTMLElement} container
  * @param {object} param1
  */
 /* RENDERING UI ELEMENTS */
-function renderProduct(container, { title, productId }) {
+function renderTodo(container, { title, todoId }) {
   let card = _create("div");
   card.className = "card border rounded mx-auto w-75 p-2 mb-2";
 
@@ -49,10 +49,10 @@ function renderProduct(container, { title, productId }) {
   cardFooter.className = "card-footer";
 
   let deleteButton = _button("danger", "delete");
-  deleteButton.onclick = () => deleteEvent(productId);
+  deleteButton.onclick = () => deleteEvent(todoId);
   let editButton = _button("info ml-2", "edit");
   editButton.onclick = function () {
-    editEvent(this, this.parentElement.parentElement.children[0], productId);
+    editEvent(this, this.parentElement.parentElement.children[0], todoId);
   };
 
   cardFooter.append(deleteButton);
@@ -65,44 +65,44 @@ function renderProduct(container, { title, productId }) {
 }
 
 /**
- * @function renderProducts takes a localStorage key as a parameter
- * to define wich list (array) of products to render
+ * @function renderTodos takes a localStorage key as a parameter
+ * to define wich list (array) of todos to render
  * @param {string} target
  */
-function renderProducts(target = "products") {
-  let container = _select(".product-list"); // Products Container
-  let productList = getLocal(target); // fetch All products from
+function renderTodos(target = "todos") {
+  let container = _select(".todos-list"); //- Todos Container
+  let todos = getLocal(target); // fetch All todos from
 
-  for (let product of productList) {
-    renderProduct(container, product); // render each element
+  for (let todo of todos) {
+    renderTodo(container, todo); // render each element
   }
 }
 
 /**
- * @function clearProducts Removes the products from the DOM
+ * @function clearTodos Removes the todos from the DOM
  */
-function clearProducts() {
-  let children = [].slice.call(_select(".product-list").children);
+function clearTodos() {
+  let children = [].slice.call(_select(".todos-list").children);
   for (let child of children) {
-    _select(".product-list").removeChild(child);
+    _select(".todos-list").removeChild(child);
   }
 }
 
-function rerenderProducts(target = "products", data) {
+function rerenderTodos(target = "todos", data) {
   saveLocal(target, data);
-  clearProducts();
-  renderProducts(target);
+  clearTodos();
+  renderTodos(target);
 }
 
 // Program Initialize
 if (!getLocal()) {
-  saveLocal("products", []);
+  saveLocal("todos", []);
 }
 
-let products = getLocal();
+let todos = getLocal();
 
-if (products.length) {
-  renderProducts(); // Render only if at least one product exists
+if (todos.length) {
+  renderTodos(); // Render only if at least one todo exists
 } else {
   disableSearchInput(true);
 }
@@ -117,30 +117,31 @@ function disableSearchInput(cond) {
 
 // Attach Event Listeners
 _select(".btn-danger").onclick = function () {
-  clearProducts();
+  clearTodos();
   clearLocal();
+  _select("#searchInput").value = "";
   disableSearchInput(true);
 };
 
-_select("#addProduct").onsubmit = function (ev) {
+_select("#addTodo").onsubmit = function (ev) {
   ev.preventDefault();
 
-  let product = {
+  let todo = {
     title: this.title.value,
-    productId: Math.floor(Math.random() * 10000),
+    todoId: Math.floor(Math.random() * 10000),
   };
   this.title.value = "";
-  let products = getLocal();
+  let todos = getLocal();
   disableSearchInput(false);
-  rerenderProducts("products", [...products, product]);
+  rerenderTodos("todos", [...todos, todo]);
 };
 
 function deleteEvent(id) {
-  let products = getLocal();
+  let todos = getLocal();
 
-  let filteredProducts = products.filter(({ productId }) => productId != id);
-  if (!filteredProducts.length) disableSearchInput(true);
-  rerenderProducts("products", filteredProducts);
+  let filteredTodos = todos.filter(({ todoId }) => todoId != id);
+  if (!filteredTodos.length) disableSearchInput(true);
+  rerenderTodos("todos", filteredTodos);
 }
 /**
  *
@@ -170,7 +171,7 @@ function editEvent(button, cardBody, id) {
  * the third parameter is the cardBody of the post and th forth is the input
  * on the edit mode the function replace the input (after retrieving the value) with the cardBody,
  * and the validate button with the edit button.
- * the last argument is the id of the product that needs to be updated.
+ * the last argument is the id of the todo that needs to be updated.
  * @param {HTMLButtonElement} mainButton
  * @param {HTMLButtonElement} editButton
  * @param {HTMLDivElement} div
@@ -182,34 +183,32 @@ function validateEvent(mainButton, editButton, div, input, id) {
   input.parentElement.replaceChild(div, input);
   mainButton.parentElement.replaceChild(editButton, mainButton);
 
-  let products = getLocal();
-  let editedProducts = products.map((product) => {
-    if (product.productId == id) {
-      product.title = input.value;
-      return product; // Edited!
+  let todos = getLocal();
+  let editedTodos = todos.map((todo) => {
+    if (todo.todoId == id) {
+      todo.title = input.value;
+      return todo; // Edited!
     } else {
-      return product;
+      return todo;
     }
   });
 
-  rerenderProducts("products", editedProducts);
+  rerenderTodos("todos", editedTodos);
 }
 
-/* fliter the products and save it on search LocalStorage */
+/* fliter the todos and save it on search LocalStorage */
 _select("#searchInput").onkeyup = function (ev) {
   if (!localStorage.getItem("search")) {
     localStorage.setItem("search", "[]");
   }
 
   if (!this.value) {
-    clearProducts();
-    renderProducts();
+    clearTodos();
+    renderTodos();
   } else {
-    let products = getLocal();
-    let searchResult = products.filter(({ title }) =>
-      title.includes(this.value)
-    );
+    let todos = getLocal();
+    let searchResult = todos.filter(({ title }) => title.includes(this.value));
 
-    rerenderProducts("search", searchResult);
+    rerenderTodos("search", searchResult);
   }
 };
